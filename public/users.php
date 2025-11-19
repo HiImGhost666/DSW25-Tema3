@@ -1,24 +1,51 @@
 <?php
-require_once '../vendor/autoload.php';
 
+use Dsw\Blog\DAO\PostDAO;
 use Dsw\Blog\DAO\UserDAO;
-use Dsw\Blog\Database;
 
-if(!isset($_GET['id']) || !is_numeric($_GET['id'])){
-    die("ID de usuario no proporcionado.");
-}
-try{
-    $conn = Database::getConnection();
-}catch(PDOException $e){
-    die("Error de conexión a la base de datos: " . $e->getMessage());
-    exit;
-}
-
-
-$id = $_GET['id'];
+require_once '../bootstrap.php';
 
 $userDAO = new UserDAO($conn);
-$user = $userDAO->get($id);
-
+$users = $userDAO->getAll();
 
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Lista de usuarios</h1>
+    <p>
+        <a href="create.php">Crear nuevo usuario</a>
+    </p>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Fecha registro</th>
+                <th>Número artículos</th>
+            </tr>
+        </thead>
+        <tbody>
+<?php
+    $postDAO = new PostDAO($conn);
+    foreach($users as $user) {
+        $posts = $postDAO->getByUser($user->getId());
+        echo "<tr>";
+        printf("<td><a href=\"user.php?id=%s\">%s</a></td>", $user->getId(), $user->getId());
+        printf("<td>%s</td>", $user->getName());
+        printf("<td>%s</td>", $user->getEmail());
+        printf("<td>%s</td>", $user->getRegisterDate()->format('d-m-Y'));
+        printf("<td><a href=\"postsUser.php?id=%s\">%s</a></td>", $user->getId(), count($posts));
+        echo "</tr>";
+    }
+?>
+        </tbody>
+    </table>
+</body>
+</html>
