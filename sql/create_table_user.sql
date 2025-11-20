@@ -2,5 +2,7 @@ CREATE TABLE IF NOT EXISTS users(
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(20) NOT NULL,
     email VARCHAR(20) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    level ENUM('admin', 'user') DEFAULT 'user',
     register_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
